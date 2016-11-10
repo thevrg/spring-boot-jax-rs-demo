@@ -1,14 +1,21 @@
 package hu.dpc.edu.rest;
 
 import hu.dpc.edu.Customer;
+import hu.dpc.edu.CustomerREST;
 import hu.dpc.edu.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.jaxrs.JaxRsLinkBuilder;
+import org.springframework.hateoas.jaxrs.JaxRsLinkBuilderFactory;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
 /**
  * Created by vrg on 2016. 11. 10..
@@ -31,8 +38,12 @@ public class CustomerResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Customer get() {
-        return repository.findById(customerId);
+    public CustomerREST get(@Context UriInfo uriInfo) {
+
+        final CustomerREST customerREST = new CustomerREST(repository.findById(customerId));
+        final URI uri = uriInfo.getAbsolutePathBuilder().build();
+        customerREST.add(new Link(uri.toString(), "self"));
+        return customerREST;
     }
 
     @PUT

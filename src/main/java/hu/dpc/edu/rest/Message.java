@@ -20,13 +20,14 @@ public class Message {
     }
 
     @JsonCreator
-    public Message(int code, String message, String displayName) {
+    public Message(@JsonProperty("code") int code,
+                   @JsonProperty("uzenet")String message,
+                   @JsonProperty("displayName")String displayName) {
         this.code = code;
         this.message = message;
         this.displayName = displayName;
     }
 
-    @XmlTransient
     public int getCode() {
         return code;
     }
@@ -40,5 +41,14 @@ public class Message {
     @XmlElement
     public String getDisplayName() {
         return displayName;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "code=" + code +
+                ", message='" + message + '\'' +
+                ", displayName='" + displayName + '\'' +
+                '}';
     }
 }

@@ -4,6 +4,7 @@ import hu.dpc.edu.Customer;
 import hu.dpc.edu.CustomerRepository;
 import hu.dpc.edu.RestResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 /**
  * Created by vrg on 2016. 11. 09..
@@ -42,13 +44,13 @@ public class CustomersResource {
         if (!justLinks) {
             return Response.ok().entity(repository.findAll()).build();
         } else {
-            final List<String> uriList = repository.findAll().stream()
-                    .map(customer -> uriInfo.getAbsolutePathBuilder()
+            final List<Link> linkList = repository.findAll().stream()
+                    .map(customer -> new Link(uriInfo.getAbsolutePathBuilder()
                             .path(CustomersResource.class, "findCustomerById")
-                            .build(customer.getId()).toString()
+                            .build(customer.getId()).toString(), "customer")
                     ).collect(Collectors.toList());
 
-            return Response.ok().entity(uriList).build();
+            return Response.ok().entity(linkList).build();
         }
 
     }
@@ -67,6 +69,7 @@ public class CustomersResource {
         return Response
                 .created(customerURI)
                 .header("customHeader","customValue")
+                .link(customerURI, "created")
                 .entity(new Message(201,
                         "Created",
                         "Customer successfully crated with id: " + newId))
