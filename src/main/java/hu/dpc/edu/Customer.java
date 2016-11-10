@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by vrg on 2016. 11. 07..
  */
-public class Customer {
+public class Customer implements Cloneable {
     private Long id;
 
     private String firstName;
@@ -20,7 +20,18 @@ public class Customer {
         this.lastName = lastName;
     }
 
-
+    @Override
+    public Customer clone()  {
+        try {
+            Customer cloned =  (Customer) super.clone();
+            if (birthDate != null) {
+                cloned.birthDate = (Date) birthDate.clone();
+            }
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public Long getId() {
         return id;

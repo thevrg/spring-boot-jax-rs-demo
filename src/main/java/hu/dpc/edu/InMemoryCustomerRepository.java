@@ -24,10 +24,12 @@ public class InMemoryCustomerRepository implements CustomerRepository, Applicati
     private ApplicationContext context;
 
     @Override
-    public void addCustomer(Customer customer) {
+    public long addCustomer(Customer customer) {
         final long id = counter.incrementAndGet();
-        customer.setId(id);
-        customerMap.put(id, customer);
+        final Customer managedCustomer = customer.clone();
+        managedCustomer.setId(id);
+        customerMap.put(id, managedCustomer);
+        return id;
     }
 
     @Override
@@ -37,7 +39,12 @@ public class InMemoryCustomerRepository implements CustomerRepository, Applicati
 
     @Override
     public void updateCustomer(Customer customer) {
-        customerMap.put(customer.getId(), customer);
+        final Customer cloned = customer.clone();
+        final Customer managedCustomer = customerMap.get(customer.getId());
+        managedCustomer.setFirstName(cloned.getFirstName());
+        managedCustomer.setLastName(cloned.getLastName());
+        managedCustomer.setActive(cloned.isActive());
+        managedCustomer.setDateOfBirth(cloned.getDateOfBirth());
     }
 
     @Override

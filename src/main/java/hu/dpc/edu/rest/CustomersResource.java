@@ -55,27 +55,25 @@ public class CustomersResource {
     @Produces({MediaType.APPLICATION_JSON+";charset=UTF-8", MediaType.APPLICATION_XML})
 //    @CustomMarshaller(rootElement = "Uzenet")
     public Response addCustomer(Customer customer, @Context UriInfo uriInfo) {
-        repository.addCustomer(customer);
+        final long newId = repository.addCustomer(customer);
 
         final URI customerURI = uriInfo.getAbsolutePathBuilder()
                 .path(CustomersResource.class, "findCustomerById")
-                .build(customer.getId());
+                .build(newId);
 
         return Response
                 .created(customerURI)
                 .header("customHeader","customValue")
                 .entity(new Message(201,
                         "Created",
-                        "Customer successfully crated with id: " + customer.getId()))
+                        "Customer successfully crated with id: " + newId))
 //                .type(MediaType.APPLICATION_JSON_TYPE.withCharset("UTF-8"))
                 .build();
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("{customerId:\\d+}")
-    public Customer findCustomerById(@PathParam("customerId") long id) {
-        return repository.findById(id);
+    public CustomerResource findCustomerById(@PathParam("customerId") long id) {
+        return new CustomerResource(id, repository);
     }
 
     @GET

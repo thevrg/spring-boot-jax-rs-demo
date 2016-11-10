@@ -7,7 +7,7 @@ import java.util.function.Predicate;
  * Created by vrg on 2016. 11. 07..
  */
 public interface CustomerRepository {
-    public void addCustomer(Customer customer);
+    public long addCustomer(Customer customer);
     public void removeCustomer(Long customerId);
     public void updateCustomer(Customer customer);
     public Customer findById(Long id);
