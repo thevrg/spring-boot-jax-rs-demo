@@ -8,7 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.inject.Inject;
 import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -33,8 +38,36 @@ public class CustomersResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addCustomer(Customer customer) {
+    @Produces({MediaType.APPLICATION_JSON+";charset=UTF-8", MediaType.APPLICATION_XML})
+    @CustomMarshaller(rootElement = "Uzenet")
+    public Response addCustomer(Customer customer, @Context UriInfo uriInfo) {
         repository.addCustomer(customer);
+
+        final URI customerURI = uriInfo.getAbsolutePathBuilder()
+                .path(CustomersResource.class, "findCustomerById")
+                .build(customer.getId());
+
+        return Response
+                .created(customerURI)
+                .header("customHeader","customValue")
+                .entity(new Message(201,
+                        "Created",
+                        "Customer successfully crated with id: " + customer.getId()))
+//                .type(MediaType.APPLICATION_JSON_TYPE.withCharset("UTF-8"))
+                .build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{customerId:\\d+}")
+    public Customer findCustomerById(@PathParam("customerId") long id) {
+        return repository.findById(id);
+    }
+
+    @GET
+    @Path("titok")
+    public String hello() {
+        return "Hello world";
     }
 
     @GET
