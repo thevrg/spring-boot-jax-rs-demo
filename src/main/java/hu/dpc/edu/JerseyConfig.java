@@ -3,6 +3,8 @@ package hu.dpc.edu;
 import hu.dpc.edu.rest.CustomersResource;
 import hu.dpc.edu.rest.MessageResource;
 import hu.dpc.edu.rest.MessageToXMLWriter;
+import org.glassfish.jersey.jaxb.internal.JaxbAutoDiscoverable;
+import org.glassfish.jersey.jaxb.internal.XmlJaxbElementProvider;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
 

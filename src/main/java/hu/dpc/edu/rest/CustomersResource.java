@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by vrg on 2016. 11. 09..
@@ -32,14 +33,27 @@ public class CustomersResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Customer> getAllCustomers() {
-        return repository.findAll();
+    public Response getAllCustomers(@QueryParam("justLinks") @DefaultValue("true") boolean justLinks,
+            @Context UriInfo uriInfo) {
+
+        if (!justLinks) {
+            return Response.ok().entity(repository.findAll()).build();
+        } else {
+            final List<String> uriList = repository.findAll().stream()
+                    .map(customer -> uriInfo.getAbsolutePathBuilder()
+                            .path(CustomersResource.class, "findCustomerById")
+                            .build(customer.getId()).toString()
+                    ).collect(Collectors.toList());
+
+            return Response.ok().entity(uriList).build();
+        }
+
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces({MediaType.APPLICATION_JSON+";charset=UTF-8", MediaType.APPLICATION_XML})
-    @CustomMarshaller(rootElement = "Uzenet")
+//    @CustomMarshaller(rootElement = "Uzenet")
     public Response addCustomer(Customer customer, @Context UriInfo uriInfo) {
         repository.addCustomer(customer);
 
