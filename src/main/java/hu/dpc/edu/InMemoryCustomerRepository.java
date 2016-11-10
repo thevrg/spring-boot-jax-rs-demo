@@ -1,5 +1,6 @@
 package hu.dpc.edu;
 
+import hu.dpc.edu.rest.EntityNotFoundException;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -34,13 +35,19 @@ public class InMemoryCustomerRepository implements CustomerRepository, Applicati
 
     @Override
     public void removeCustomer(Long customerId) {
-        customerMap.remove(customerId);
+        final Customer removed = customerMap.remove(customerId);
+        if (removed == null) {
+            throw new EntityNotFoundException(Customer.class, customerId);
+        }
     }
 
     @Override
     public void updateCustomer(Customer customer) {
-        final Customer cloned = customer.clone();
         final Customer managedCustomer = customerMap.get(customer.getId());
+        if (managedCustomer == null) {
+            throw new EntityNotFoundException(Customer.class, customer.getId());
+        }
+        final Customer cloned = customer.clone();
         managedCustomer.setFirstName(cloned.getFirstName());
         managedCustomer.setLastName(cloned.getLastName());
         managedCustomer.setActive(cloned.isActive());
@@ -49,7 +56,11 @@ public class InMemoryCustomerRepository implements CustomerRepository, Applicati
 
     @Override
     public Customer findById(Long id) {
-        return customerMap.get(id);
+        Customer customer = customerMap.get(id);
+        if (customer == null) {
+            throw new EntityNotFoundException(Customer.class, id);
+        }
+        return customer;
     }
 
     @Override
