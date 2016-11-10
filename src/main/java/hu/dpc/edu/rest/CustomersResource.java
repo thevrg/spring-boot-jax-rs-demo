@@ -6,6 +6,7 @@ import hu.dpc.edu.RestResource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
 import javax.ws.rs.client.Entity;
@@ -25,10 +26,12 @@ import java.util.stream.Collectors;
 public class CustomersResource {
 
     private CustomerRepository repository;
+    private Provider<CustomerResource>customerResourceProvider;
 
     @Autowired
-    public CustomersResource(CustomerRepository repository) {
+    public CustomersResource(CustomerRepository repository, Provider<CustomerResource>customerResourceProvider) {
         this.repository = repository;
+        this.customerResourceProvider = customerResourceProvider;
     }
 
     @GET
@@ -73,7 +76,9 @@ public class CustomersResource {
 
     @Path("{customerId:\\d+}")
     public CustomerResource findCustomerById(@PathParam("customerId") long id) {
-        return new CustomerResource(id, repository);
+        final CustomerResource customerResource = customerResourceProvider.get();
+        customerResource.setCustomerId(id);
+        return customerResource;
     }
 
     @GET

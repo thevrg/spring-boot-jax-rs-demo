@@ -1,10 +1,6 @@
 package hu.dpc.edu;
 
-import hu.dpc.edu.rest.CustomersResource;
-import hu.dpc.edu.rest.MessageResource;
-import hu.dpc.edu.rest.MessageToXMLWriter;
-import org.glassfish.jersey.jaxb.internal.JaxbAutoDiscoverable;
-import org.glassfish.jersey.jaxb.internal.XmlJaxbElementProvider;
+import hu.dpc.edu.rest.*;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
 
@@ -18,5 +14,7 @@ public class JerseyConfig extends ResourceConfig {
         register(MessageResource.class);
         register(CustomersResource.class);
         register(MessageToXMLWriter.class);
+        register(EntityNotFoundExceptionMapper.class);
+        register(IllegalArgumentExceptionMapper.class);
     }
 }

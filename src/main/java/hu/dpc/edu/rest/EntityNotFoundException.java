@@ -10,13 +10,7 @@ public class EntityNotFoundException extends RepositoryException {
     private final long id;
 
     public EntityNotFoundException(Class entityType, long id) {
-        super(entityType.getSimpleName() + " not found with id " + id,
-                Response.status(Response.Status.NOT_FOUND)
-                        .entity(
-                                new Message(Response.Status.NOT_FOUND.getStatusCode(),
-                                        "not found",
-                                        entityType.getSimpleName() + " not found with id " + id))
-                        .build());
+        super(entityType.getSimpleName() + " not found with id " + id);
         this.entityType = entityType;
         this.id = id;
     }
