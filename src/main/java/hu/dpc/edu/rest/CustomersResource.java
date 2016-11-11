@@ -3,14 +3,13 @@ package hu.dpc.edu.rest;
 import hu.dpc.edu.Customer;
 import hu.dpc.edu.CustomerRepository;
 import hu.dpc.edu.RestResource;
+import hu.dpc.edu.rest.security.ProtectedByMySecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 
-import javax.inject.Inject;
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Provider;
-import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -25,6 +24,7 @@ import java.util.stream.Collectors;
  */
 @RestResource
 @Path("customers")
+@ProtectedByMySecurityFilter
 public class CustomersResource {
 
     private CustomerRepository repository;
@@ -59,6 +59,7 @@ public class CustomersResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces({MediaType.APPLICATION_JSON+";charset=UTF-8", MediaType.APPLICATION_XML})
 //    @CustomMarshaller(rootElement = "Uzenet")
+    @RolesAllowed("admin")
     public Response addCustomer(Customer customer, @Context UriInfo uriInfo) {
         final long newId = repository.addCustomer(customer);
 

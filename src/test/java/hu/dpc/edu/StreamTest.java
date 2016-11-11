@@ -8,6 +8,7 @@ import org.junit.rules.ExpectedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ForkJoinTask;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -257,7 +258,29 @@ public class StreamTest {
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage("closed");
 
+        //throw new IllegalStateException("Blah blah closed blah blah");
         stream.filter(s -> s.startsWith("A")).collect(Collectors.toList());
 
     }
+
+    @Test
+    public void testParallelIntStreamReduce() {
+
+        int product = IntStream.of(1,2,3,4,5,6,7,8,9,10)
+                .parallel()
+                .filter(
+                        num -> num < 5
+                )
+                .reduce(1, new IntBinaryOperator() {
+                    @Override
+                    public int applyAsInt(int left, int right) {
+                        return left * right;
+                    }
+                });
+
+        System.out.println("Product: " + product);
+
+
+    }
+
 }
