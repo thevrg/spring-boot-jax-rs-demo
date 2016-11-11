@@ -4,6 +4,7 @@ import hu.dpc.edu.rest.Message;
 import org.glassfish.jersey.CommonProperties;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.jsonp.JsonProcessingFeature;
 import org.glassfish.json.jaxrs.JsonStructureBodyReader;
 import org.glassfish.json.jaxrs.JsonStructureBodyWriter;
 import org.json.JSONObject;
@@ -33,9 +34,7 @@ public class RestClientTest {
         final ClientConfig config = new ClientConfig()
                 .property(ClientProperties.METAINF_SERVICES_LOOKUP_DISABLE, true)
                 .property(ClientProperties.FEATURE_AUTO_DISCOVERY_DISABLE, true)
-                .property(ClientProperties.JSON_PROCESSING_FEATURE_DISABLE, true)
-                .register(JsonStructureBodyReader.class)
-                .register(JsonStructureBodyWriter.class);
+                .register(JsonProcessingFeature.class);
 
         final Response response = ClientBuilder.newBuilder()
                 .withConfig(config).newClient()
@@ -54,6 +53,6 @@ public class RestClientTest {
 
         System.out.println(location);
 
-        System.out.println(secondResponse.getEntity());
+        System.out.println(secondResponse.readEntity(CustomerREST.class));
     }
 }

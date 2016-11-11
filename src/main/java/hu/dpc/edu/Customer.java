@@ -3,6 +3,8 @@ package hu.dpc.edu;
 import org.springframework.hateoas.ResourceSupport;
 
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by vrg on 2016. 11. 07..
@@ -17,9 +19,22 @@ public class Customer implements Cloneable {
     public Customer() {
     }
 
+    public Customer(String firstName) {
+        this.firstName = firstName;
+    }
+
     public Customer(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public static Customer createCustomerByFullName(String fullName) {
+        final Matcher matcher = Pattern.compile("(\\w+) (\\w+)").matcher(fullName);
+        if (matcher.matches()) {
+            return new Customer(matcher.group(1), matcher.group(2));
+        } else {
+            return new Customer(fullName, "");
+        }
     }
 
     @Override
@@ -73,5 +88,15 @@ public class Customer implements Cloneable {
 
     public void setActive(boolean active) {
 
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", birthDate=" + birthDate +
+                '}';
     }
 }

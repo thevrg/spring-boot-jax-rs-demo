@@ -9,11 +9,18 @@ public class CustomerREST extends ResourceSupport {
 
     private Customer content;
 
+    public CustomerREST() {
+    }
+
     public CustomerREST(Customer content) {
         this.content = content;
     }
 
     public Customer getContent() {
         return content;
+    }
+
+    public void setContent(Customer content) {
+        this.content = content;
     }
 }
